@@ -1,6 +1,11 @@
-<div class="mb-3">
-    <label for="formFile" class="form-label">Default file input example</label>
-    <input class="form-control" type="file" id="formFile">
-  </div>
+<div class="container" *ngIf="!file" style="margin-top: 2em;">
+    <div class="row"></div>
+    <div class="row">
+        <div class="col-3">
+            <label for="formFile" class="form-label">Please choose policy</label>
+            <input class="form-control" type="file" id="formFile" (change)="handleFileInput($event.target.files)">
+        </div>
+    </div>
+</div>
 
-<app-file-upload></app-file-upload>
+<app-file-upload *ngIf="file" [fileToUpload]="file"></app-file-upload>

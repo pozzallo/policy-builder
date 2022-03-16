@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Policy } from '../policy.model';
 import * as xml2js from 'xml2js';
 import { PolicyService } from '../policy.service';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-file-upload',
@@ -10,24 +11,31 @@ import { PolicyService } from '../policy.service';
 })
 export class FileUploadComponent implements OnInit {
 
-  fileToUpload: File | null = null;
+ @Input() fileToUpload: File;
   parser: xml2js.Parser;
   policy: Policy;
+  policyForm: FormGroup;
 
   constructor(private policyService: PolicyService) { }
 
   ngOnInit(): void {
     this.parser = new xml2js.Parser();
-  }
-
-  handleFileInput(files: FileList) {
-    this.fileToUpload = files.item(0);
     this.getFileAsString(this.fileToUpload).then((xmlString: string) => {
       this.parser.parseString(xmlString, (err, result) => {
         console.log(result);
+        console.log(err);
         this.policy = this.policyService.createPolicy(result);
+        this.initForm();
       })
     });
+  }
+
+  initForm(){
+    this.policyForm = new FormGroup({
+      title: new FormControl(this.policy.title),
+      version: new FormControl(this.policy.version),
+      desc: new FormControl(this.policy.description)
+    })
   }
 
   getFileAsString(file: File) {
